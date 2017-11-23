@@ -1,5 +1,3 @@
-
-
 matrix:
   include:
     - env: SUBSURFACE_PLATFORM='mac'
@@ -46,6 +44,13 @@ matrix:
             # Not a subsurface dependency, but a QtWebKit dependency
             - libhyphen-dev
             - libicu52
+        coverity_scan:
+          project:
+            name: "Subsurface-divelog/subsurface"
+            description: "Build submitted via Travis CI"
+          notification_email: glance@acc.umu.se
+          build_command: bash ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/travisbuild.sh
+          branch_pattern: coverity_scan
 
     - env: SUBSURFACE_PLATFORM="android"
       # Currently hard coded to arm
@@ -64,7 +69,7 @@ before_install:
     - source ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/before_install.sh
 
 script:
-    - source ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/travisbuild.sh
+    - if [ "$COVERITY_SCAN_BRANCH" != "1" ] ; then source ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/travisbuild.sh ; fi
 
 after_success:
     - source ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/after_success.sh
