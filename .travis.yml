@@ -1,15 +1,15 @@
 matrix:
   include:
-    - env: SUBSURFACE_PLATFORM='mac'
-      os: osx
-      osx_image: xcode6.4
-      language: c++ ruby
-
-    - env: SUBSURFACE_PLATFORM='windows'
-      os: linux
-      dist: trusty
-      sudo: required
-      language: c++
+#    - env: SUBSURFACE_PLATFORM='mac'
+#      os: osx
+#      osx_image: xcode6.4
+#      language: c++ ruby
+#
+#    - env: SUBSURFACE_PLATFORM='windows'
+#      os: linux
+#      dist: trusty
+#      sudo: required
+#      language: c++
 
     - env: SUBSURFACE_PLATFORM='linux'
       os: linux
@@ -52,13 +52,13 @@ matrix:
           build_command: bash ${TRAVIS_BUILD_DIR}/scripts/${SUBSURFACE_PLATFORM}/travisbuild.sh
           branch_pattern: coverity_scan
 
-    - env: SUBSURFACE_PLATFORM="android"
-      # Currently hard coded to arm
-      os: linux
-      language: c++
-      filter_secrets: false
-      services:
-          - docker
+#    - env: SUBSURFACE_PLATFORM="android"
+#      # Currently hard coded to arm
+#      os: linux
+#      language: c++
+#      filter_secrets: false
+#      services:
+#          - docker
 # TODO: caching
 #      cache:
 #          timeout: 300
