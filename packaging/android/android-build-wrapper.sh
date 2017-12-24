@@ -13,6 +13,8 @@
 # Qt/5.9/android_armv7/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake
 # (this script tries to do this automatically)
 
+set -x # make debugging Travis easier
+
 exec 1> >(tee ./build.log) 2>&1
 
 USE_X=$(case $- in *x*) echo "-x" ;; esac)
@@ -88,7 +90,8 @@ if [ ! -d $ANDROID_SDK ] ; then
 	mkdir $ANDROID_SDK
 	pushd $ANDROID_SDK
 	unzip -q ../$SDK_TOOLS
-	yes | tools/bin/sdkmanager --licenses
+	yes | tools/bin/sdkmanager --licenses > /dev/null 2>&1 || echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > licenses/android-sdk-license
+	cat licenses/android-sdk-license
 	# FIXME: Read these from build.sh varables, or install them there.
 	tools/bin/sdkmanager tools platform-tools 'platforms;android-27' 'build-tools;25.0.3'
 	popd
