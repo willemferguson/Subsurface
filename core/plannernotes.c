@@ -54,10 +54,10 @@ int add_icd_entry(char *icdbuffer, unsigned int maxsize, struct icd_data *icdval
 		"<td style='padding-left: 15px; color:%s;'>%+5.2f%s</td>"
 		"<td style='padding-left: 15px;'>%+5.2f%s</td></tr>",
 		gasname(gas_to), icdvalues->dHe / 10.0, 
-		((5 * icdvalues->dN2) > -icdvalues->dHe) ? "red" : "#383838", icdvalues->dN2 / 10.0 , 0.2 * (-icdvalues->dHe / 10), 
-		ambientpressure_mbar * icdvalues->dHe / 1e6, translate("gettextFromC", "bar"), ((5 * icdvalues->dN2) > -icdvalues->dHe) ? "red" : "#383838",
-		ambientpressure_mbar * icdvalues->dN2 / 1e6, translate("gettextFromC", "bar"), 
-		ambientpressure_mbar * -icdvalues->dHe / 5e6, translate("gettextFromC", "bar"));
+		((5 * icdvalues->dN2) > -icdvalues->dHe) ? "red" : "#383838", icdvalues->dN2 / 10.0 , 0.2 * (-icdvalues->dHe / 10.0), 
+		ambientpressure_mbar * icdvalues->dHe / 1e6f, translate("gettextFromC", "bar"), ((5 * icdvalues->dN2) > -icdvalues->dHe) ? "red" : "#383838",
+		ambientpressure_mbar * icdvalues->dN2 / 1e6f, translate("gettextFromC", "bar"), 
+		ambientpressure_mbar * -icdvalues->dHe / 5e6f, translate("gettextFromC", "bar"));
 
 	return len;
 }
