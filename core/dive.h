@@ -151,7 +151,7 @@ struct dive {
 	char *notes;
 	char *divemaster, *buddy;
 	int rating;
-	int visibility; /* 0 - 5 star rating */
+	int visibility, wavesize, surge, current, chill; /* 0 - 5 star rating */
 	cylinder_t cylinder[MAX_CYLINDERS];
 	weightsystem_t weightsystem[MAX_WEIGHTSYSTEMS];
 	char *suit;
@@ -193,6 +193,10 @@ struct dive_components {
 	unsigned int suit : 1;
 	unsigned int rating : 1;
 	unsigned int visibility : 1;
+	unsigned int wavesize : 1;
+	unsigned int current : 1;
+	unsigned int surge : 1;
+	unsigned int chill : 1;
 	unsigned int tags : 1;
 	unsigned int cylinders : 1;
 	unsigned int weights : 1;

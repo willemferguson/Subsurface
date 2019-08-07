@@ -51,7 +51,6 @@ slots:
 	void tripChanged(dive_trip *trip, TripField field);
 	void updateDiveInfo();
 	void updateNotes(const struct dive *d);
-	void updateMode(struct dive *d);
 	void updateDateTime(struct dive *d);
 	void updateDiveSite(struct dive *d);
 	void acceptChanges();
@@ -62,22 +61,17 @@ slots:
 	void on_buddy_editingFinished();
 	void on_diveTripLocation_editingFinished();
 	void on_notes_editingFinished();
-	void on_airtemp_editingFinished();
 	void on_duration_editingFinished();
 	void on_depth_editingFinished();
-	void divetype_Changed(int);
-	void on_watertemp_editingFinished();
 	void on_dateEdit_dateChanged(const QDate &date);
 	void on_timeEdit_timeChanged(const QTime & time);
 	void on_rating_valueChanged(int value);
-	void on_visibility_valueChanged(int value);
 	void on_tagWidget_editingFinished();
 	void hideMessage();
 	void closeMessage();
 	void closeWarning();
 	void displayMessage(QString str);
 	void enableEdition(EditMode newEditMode = NONE);
-	void updateTextLabels(bool showUnits = true);
 	void escDetected(void);
 private:
 	Ui::MainTab ui;

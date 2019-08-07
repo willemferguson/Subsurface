@@ -95,6 +95,42 @@ public:
 	DiveField fieldId() const override;
 };
 
+class EditWaveSize : public EditBase<int> {
+public:
+	using EditBase<int>::EditBase;	// Use constructor of base class.
+	void set(struct dive *d, int value) const override;
+	int data(struct dive *d) const override;
+	QString fieldName() const override;
+	DiveField fieldId() const override;
+};
+
+class EditCurrent : public EditBase<int> {
+public:
+	using EditBase<int>::EditBase;	// Use constructor of base class.
+	void set(struct dive *d, int value) const override;
+	int data(struct dive *d) const override;
+	QString fieldName() const override;
+	DiveField fieldId() const override;
+};
+
+class EditSurge : public EditBase<int> {
+public:
+	using EditBase<int>::EditBase;	// Use constructor of base class.
+	void set(struct dive *d, int value) const override;
+	int data(struct dive *d) const override;
+	QString fieldName() const override;
+	DiveField fieldId() const override;
+};
+
+class EditChill : public EditBase<int> {
+public:
+	using EditBase<int>::EditBase;	// Use constructor of base class.
+	void set(struct dive *d, int value) const override;
+	int data(struct dive *d) const override;
+	QString fieldName() const override;
+	DiveField fieldId() const override;
+};
+
 class EditAirTemp : public EditBase<int> {
 public:
 	using EditBase<int>::EditBase;	// Use constructor of base class.
@@ -234,6 +270,10 @@ struct PasteState {
 	QString suit;
 	int rating;
 	int visibility;
+	int wavesize;
+	int current;
+	int surge;
+	int chill;
 	tag_entry *tags;
 	cylinder_t cylinders[MAX_CYLINDERS];
 	weightsystem_t weightsystems[MAX_WEIGHTSYSTEMS];
