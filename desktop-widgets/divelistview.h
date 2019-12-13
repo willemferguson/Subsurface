@@ -38,6 +38,8 @@ public:
 	QList<dive_trip *> selectedTrips();
 	static QString lastUsedImageDir();
 	static void updateLastUsedImageDir(const QString &s);
+	static QString lastUsedGPSDir();
+	static void updateLastUsedGPSDir(const QString &s);
 signals:
 	void divesSelected();
 public
@@ -60,6 +62,7 @@ slots:
 	void renumberDives();
 	void shiftTimes();
 	void loadImages();
+	void loadGPS();
 	void loadWebImages();
 	void diveSelectionChanged(const QVector<QModelIndex> &indexes);
 	void currentDiveChanged(QModelIndex index);
@@ -86,8 +89,16 @@ private:
 	int lastImageTimeOffset();
 	void addToTrip(int delta);
 	void matchImagesToDives(QStringList fileNames);
+	void matchGPSToDives(QStringList fileNames);
 	void loadImageFromURL(QUrl url);
 	QNetworkAccessManager manager;
+
 };
+
+	struct dive_periods { int64_t start_dive;
+			 int64_t end_dive;
+			 int64_t start_track;
+			 int64_t end_track; };
+
 
 #endif // DIVELISTVIEW_H

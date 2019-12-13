@@ -20,6 +20,7 @@ set (SUBSURFACE_UI
 	configuredivecomputerdialog.ui
 	divecomponentselection.ui
 	divecomputermanagementdialog.ui
+	divelistgps.ui
 	divelogexportdialog.ui
 	divelogimportdialog.ui
 	divesiteimportdialog.ui
@@ -64,6 +65,8 @@ set(SUBSURFACE_INTERFACE
 	divecomputermanagementdialog.h
 	divelistview.cpp
 	divelistview.h
+	divelistgps.cpp
+	divelistgps.h
 	divelogexportdialog.cpp
 	divelogexportdialog.h
 	divelogimportdialog.cpp

@@ -30,6 +30,17 @@
 #include "desktop-widgets/simplewidgets.h"
 #include "desktop-widgets/mapwidget.h"
 
+#include "desktop-widgets/divelistgps.h"
+
+
+#include "core/dive.h"
+#include "core/divesite.h"
+
+//#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <QDebug>
+
 DiveListView::DiveListView(QWidget *parent) : QTreeView(parent),
 	currentLayout(DiveTripModelBase::TREE),
 	initialColumnWidths(DiveTripModelBase::COLUMNS, 50)	// Set up with default length 50
@@ -917,6 +928,8 @@ void DiveListView::contextMenuEvent(QContextMenuEvent *event)
 		popup.addAction(tr("Split selected dives"), this, &DiveListView::splitDives);
 		popup.addAction(tr("Load media from file(s)"), this, &DiveListView::loadImages);
 		popup.addAction(tr("Load media from web"), this, &DiveListView::loadWebImages);
+		popup.addAction(tr("Load dive coordinates from GPX file"), this, &DiveListView::loadGPS);
+
 	}
 
 	// "collapse all" really closes all trips,
@@ -934,6 +947,29 @@ void DiveListView::contextMenuEvent(QContextMenuEvent *event)
 void DiveListView::shiftTimes()
 {
 	ShiftTimesDialog::instance()->show();
+}
+
+void DiveListView::loadGPS()
+{
+	struct tm time;
+	struct dive_periods periods;
+
+	QString fileName = QFileDialog::getOpenFileName(  this, tr("Select GPS file to open"),
+								tr("/home/willem/Desktop"),
+								tr("GPS files (*.gpx *.GPX)"));
+
+DivelistGPS GPSDialog(this, fileName);
+GPSDialog.print();
+
+fprintf(stderr,"loc=%s\n",current_dive->dive_site->name);
+fprintf(stderr,"lat=%f\n",current_dive->dive_site->location.lat.udeg/1000000.0);
+periods.start_dive = current_dive->when;
+periods.end_dive = dive_endtime(current_dive);
+utc_mkdate(periods.start_dive, &time);
+fprintf(stderr,"start=%ld (%02d/%02d/%d at %02d:%02d)\n",periods.start_dive, time.tm_year, time.tm_mon+1, time.tm_mday, time.tm_hour, time.tm_min);
+fprintf(stderr,"end=%ld\n",periods.end_dive);
+
+
 }
 
 void DiveListView::loadImages()
@@ -1049,6 +1085,25 @@ void DiveListView::updateLastUsedImageDir(const QString &dir)
 	QSettings s;
 	s.beginGroup("FileDialog");
 	s.setValue("LastImageDir", dir);
+}
+
+QString DiveListView::lastUsedGPSDir()
+{
+	QSettings settings;
+	QString lastGPSDir = QDir::homePath();
+
+	settings.beginGroup("FileDialog");
+	if (settings.contains("LastGPSDir"))
+		if (QDir(settings.value("LastGPSDir").toString()).exists())
+			lastGPSDir = settings.value("LastGPSDir").toString();
+	return lastGPSDir;
+}
+
+void DiveListView::updateLastUsedGPSDir(const QString &dir)
+{
+	QSettings s;
+	s.beginGroup("FileDialog");
+	s.setValue("LastGPSDir", dir);
 }
 
 int DiveListView::lastImageTimeOffset()
