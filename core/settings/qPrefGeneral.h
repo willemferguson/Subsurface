@@ -22,8 +22,8 @@ class qPrefGeneral : public QObject {
 	Q_PROPERTY(bool diveshareExport_private READ diveshareExport_private WRITE set_diveshareExport_private NOTIFY diveshareExport_privateChanged)
 	Q_PROPERTY(bool filterFullTextNotes READ filterFullTextNotes WRITE set_filterFullTextNotes NOTIFY filterFullTextNotesChanged)
 	Q_PROPERTY(bool filterCaseSensitive READ filterCaseSensitive WRITE set_filterCaseSensitive NOTIFY filterCaseSensitiveChanged)
-	Q_PROPERTY(bool extraEnvironmentalDefault READ extraEnvironmentalDefault WRITE set_extraEnvironmentalDefault NOTIFY extraEnvironmentalDefaultChanged);
-
+	Q_PROPERTY(bool extraEnvironmentalDefault READ extraEnvironmentalDefault WRITE set_extraEnvironmentalDefault NOTIFY extraEnvironmentalDefaultChanged)
+	Q_PROPERTY(bool salinityEditDefault READ salinityEditDefault WRITE set_salinityEditDefault NOTIFY salinityEditDefaultChanged);
 
 public:
 	static qPrefGeneral *instance();
@@ -50,6 +50,7 @@ public:
 	static bool filterFullTextNotes() { return prefs.filterFullTextNotes; }
 	static bool filterCaseSensitive() { return prefs.filterCaseSensitive; }
 	static bool extraEnvironmentalDefault() { return prefs.extraEnvironmentalDefault; }
+	static bool salinityEditDefault() { return prefs.salinityEditDefault; }
 
 public slots:
 	static void set_auto_recalculate_thumbnails(bool value);
@@ -68,6 +69,7 @@ public slots:
 	static void set_filterFullTextNotes(bool value);
 	static void set_filterCaseSensitive(bool value);
 	static void set_extraEnvironmentalDefault(bool value);
+	static void set_salinityEditDefault(bool value);
 
 signals:
 	void auto_recalculate_thumbnailsChanged(bool value);
@@ -105,6 +107,7 @@ private:
 	static void disk_filterFullTextNotes(bool doSync);
 	static void disk_filterCaseSensitive(bool doSync);
 	static void disk_extraEnvironmentalDefault(bool doSync);
+	static void disk_salinityEditDefault(bool doSync);
 
 	// class variables are load only
 	static void load_diveshareExport_uid();
