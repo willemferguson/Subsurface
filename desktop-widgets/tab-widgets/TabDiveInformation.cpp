@@ -17,7 +17,7 @@
 #define TEXT_EDITED 1
 #define CSS_SET_HEADING_BLUE "QLabel { color: mediumblue;} "
 
-enum watertypes { FRESHWATER, SALTYWATER, EN13319WATER, SALTWATER };
+enum watertypes { FRESHWATER, SALTYWATER, EN13319WATER, SEAWATER };
 
 TabDiveInformation::TabDiveInformation(QWidget *parent) : TabBase(parent), ui(new Ui::TabDiveInformation())
 {
@@ -65,7 +65,7 @@ TabDiveInformation::TabDiveInformation(QWidget *parent) : TabBase(parent), ui(ne
 	updateWaterTypeWidget();
 	QPixmap warning (":salinity-warning-icon");
 	ui->salinityOverWrittenIcon->setPixmap(warning);
-	ui->salinityOverWrittenIcon->setToolTip("Water type differs from that of dc");
+	ui->salinityOverWrittenIcon->setToolTip(tr("Water type differs from that of dc"));
 	ui->salinityOverWrittenIcon->setToolTipDuration(2500);
    }
 
@@ -189,7 +189,7 @@ int TabDiveInformation::updateSalinityComboIndex(int salinity)
 	else if (salinity < 10210)
 		return EN13319WATER;
 	else
-		return SALTWATER;
+		return SEAWATER;
 }
 
 // If dive->user_salinity != dive->salinity (i.e. dc value) then show the salinity-overwrite indicator
@@ -235,12 +235,14 @@ void TabDiveInformation::updateData()
 	ui->airtemp->setText(get_temperature_string(current_dive->airtemp, true));
 	ui->atmPressType->setItemText(1, get_depth_unit());  // Check for changes in depth unit (imperial/metric)
 	ui->atmPressType->setCurrentIndex(0);                // Set the atmospheric pressure combo box to mbar
+	if ((manualDive) && (!current_dive->user_salinity))
+		current_dive->user_salinity = SEAWATER_SALINITY;  // If manual dive with no salinity defined, set it to salt water
 	if (current_dive->user_salinity)
 		salinity_value = current_dive->user_salinity;
 	else
 		salinity_value = current_dive->salinity;
 	if (salinity_value) {			// Set water type indicator (EN13319 = 1.020 g/l)
-		if (prefs.salinityEditDefault) {   //If edit-salinity is enabled then set correct water type in combobox:
+		if (prefs.salinityEditDefault || manualDive) {   //If edit-salinity is enabled then set correct water type in combobox:
 			ui->waterTypeCombo->setCurrentIndex(updateSalinityComboIndex(salinity_value)); 
 		} else {         // If water salinity is not editable: show water type as a text label
 			if (salinity_value < 10050)

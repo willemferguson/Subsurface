@@ -358,7 +358,7 @@ DiveField EditWaterTemp::fieldId() const
 // ***** Water Type *****
 void EditWaterTypeUser::set(struct dive *d, int value) const
 {
-	d->user_salinity = value > 0 ? (uint32_t)value : 0u;
+	d->user_salinity = value > 0 ? value : 0u;
 }
 
 int EditWaterTypeUser::data(struct dive *d) const
