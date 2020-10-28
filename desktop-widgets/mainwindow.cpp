@@ -50,6 +50,7 @@
 #include "desktop-widgets/tab-widgets/maintab.h"
 #include "desktop-widgets/updatemanager.h"
 #include "desktop-widgets/simplewidgets.h"
+#include "desktop-widgets/statswidget.h"
 #include "commands/command.h"
 
 #include "profile-widget/profilewidget2.h"
@@ -140,6 +141,7 @@ MainWindow::MainWindow() : QMainWindow(),
 	divePlannerSettingsWidget = new PlannerSettingsWidget(this);
 	divePlannerWidget = new DivePlannerWidget(this);
 	plannerDetails = new PlannerDetails(this);
+	StatsWidget *statistics = new StatsWidget(this);
 
 	// what is a sane order for those icons? we should have the ones the user is
 	// most likely to want towards the top so they are always visible
@@ -182,6 +184,8 @@ MainWindow::MainWindow() : QMainWindow(),
 								   { diveList, FLAG_DISABLED }, { mapWidget, FLAG_NONE } });
 	registerApplicationState(ApplicationState::FilterDive, { { mainTab.get(), FLAG_NONE }, { profileContainer, FLAG_NONE },
 								 { diveList, FLAG_NONE },      { &filterWidget, FLAG_NONE } });
+	registerApplicationState(ApplicationState::Statistics, { { statistics, FLAG_NONE }, { &filterWidget, FLAG_NONE },
+								 { diveList, FLAG_NONE },   { mapWidget, FLAG_NONE } });
 	setApplicationState(ApplicationState::Default);
 
 	setWindowIcon(QIcon(":subsurface-icon"));
@@ -1709,6 +1713,11 @@ void MainWindow::on_actionFilterTags_triggered()
 	setApplicationState(getAppState() == ApplicationState::FilterDive ? ApplicationState::Default : ApplicationState::FilterDive);
 	if (state == LIST_MAXIMIZED)
 		showFilterIfEnabled();
+}
+
+void MainWindow::on_actionStats_triggered()
+{
+	setApplicationState(getAppState() == ApplicationState::Statistics ? ApplicationState::Default : ApplicationState::Statistics);
 }
 
 void MainWindow::showFilterIfEnabled()
