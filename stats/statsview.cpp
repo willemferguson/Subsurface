@@ -306,9 +306,6 @@ QtCharts::QAbstractSeries *StatsView::addSeriesHelper(const QString &name, int t
 		return nullptr;
 	}
 
-	// Remember series so that we can delete it later
-	// TODO: This crashes with the QPie series - I detest Qt's memory management!
-	series.emplace_back(abstract_series);
 	return abstract_series;
 }
 
@@ -356,7 +353,8 @@ T *StatsView::makeAxis()
 
 void StatsView::reset()
 {
-	series.clear();
+	QQuickItem *chart = rootObject();
+	QMetaObject::invokeMethod(chart, "removeAllSeries", Qt::AutoConnection);
 	axes.clear();
 }
 
@@ -674,8 +672,6 @@ void StatsView::addBar(double lowerBound, double upperBound, double height, cons
 		return;
 	QLineSeries *lower = new QLineSeries;
 	QLineSeries *upper = new QLineSeries;
-	this->series.emplace_back(lower);
-	this->series.emplace_back(upper);
 	double delta = (upperBound - lowerBound) * histogramBarWidth;
 	double from = (lowerBound + upperBound - delta) / 2.0;
 	double to = (lowerBound + upperBound + delta) / 2.0;

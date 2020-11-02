@@ -78,7 +78,6 @@ private:
 		    QtCharts::QAbstractAxis *xAxis, QtCharts::QAbstractAxis *yAxis, bool isHorizontal);
 
 	std::vector<std::unique_ptr<QtCharts::QAbstractAxis>> axes;
-	std::vector<std::unique_ptr<QtCharts::QAbstractSeries>> series;
 };
 
 #endif
