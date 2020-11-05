@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <QQuickWidget>
+#include <QtCharts>
 
 struct dive;
 struct StatsType;
@@ -17,6 +18,7 @@ namespace QtCharts {
 
 enum class ChartSubType : int;
 enum class StatsOperation : int;
+enum axisType {COUNT, VALUE};
 
 class StatsView : public QQuickWidget {
 	Q_OBJECT
@@ -59,6 +61,7 @@ private:
 				const StatsType *categoryType, const StatsBinner *categoryBinner,
 				const StatsType *valueType, StatsOperation valueAxisOperation);
 	void setTitle(const QString &);
+	double initYAxisTickmarks(QtCharts::QValueAxis *valAxis, double maxValue, enum axisType yAxisType);
 	QtCharts::QLegend *getLegend();
 	void showLegend();
 	void hideLegend();

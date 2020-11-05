@@ -430,6 +430,43 @@ int initValueAxis(QtCharts::QValueAxis *axis, int count)
 	return max;
 }
 
+/* Calculate convenient tick mark positions on the vertical axis of a graph. The value of yAxistype can be
+   either COUNT (y-axis showing counts) or VALUE (floating-point numbers on the y-axis).
+   ======================================================================================================= */
+double StatsView::initYAxisTickmarks(QtCharts::QValueAxis *valAxis, double maxValue, enum axisType yAxisType) {
+	using QtCharts::QValueAxis;
+	// This lookup-table gives the increments on the y-axis (incr1) as function of max. bar height
+	int barHeightVal[] = { 10, 20, 50, 120, 200, 250, 500, 1200, 2000, 2500, 5000, 10000 };
+	int incr1[] =        {  1,  2,  5,  10,  20,  25,  50,  100,  200,  250,  500,  1000 };
+	double returnValue;
+	bool found1 = false;
+	for (int i=1; i<12; i++) {
+		if (maxValue <= barHeightVal[i]) {
+			int yAxisIncr = incr1[i];
+			int noTicks = (int)maxValue/ yAxisIncr + 2;
+			if (yAxisType == COUNT)
+				returnValue = initValueAxis(valAxis, (noTicks-1) * yAxisIncr);
+			else
+				returnValue = (noTicks-1) * yAxisIncr;
+			valAxis->setTickInterval(yAxisIncr);
+			valAxis->setTickCount(noTicks);
+			found1 = true;
+			break;
+		}
+	}
+	if (!found1) {	// if maxount was not found in the lookup table, use default y-axis tick marks
+		if (yAxisType == COUNT)
+			returnValue = initValueAxis(valAxis, (int)maxValue);
+		else
+			returnValue = maxValue * (1.0 + barTopSpace);
+	}
+return returnValue;
+}
+
+
+/* This chart draws a bar chart of categies (e.g. buddy or dive-mode) on the x-axis,
+   and a count for each category on the y-axis. The bars can be horizontal or vertical.
+   =========================================================================================== */
 void StatsView::plotBarChart(const std::vector<dive *> &dives,
 			     ChartSubType subType,
 			     const StatsType *categoryType, const StatsBinner *categoryBinner,
@@ -490,7 +527,7 @@ void StatsView::plotBarChart(const std::vector<dive *> &dives,
 
 	QValueAxis *valAxis = makeAxis<QValueAxis>();
 	int maxVal = isStacked ? maxCategoryCount : maxCount;
-	initValueAxis(valAxis, maxVal);
+	initYAxisTickmarks(valAxis, (double)maxVal, COUNT);
 
 	QAbstractBarSeries *series;
 	switch (subType) {
@@ -526,6 +563,9 @@ static QString makeFormatString(int decimals)
 	return QStringLiteral("%.%1f").arg(decimals < 0 ? 0 : decimals);
 }
 
+/* This chart draws a bar chart with categories on the x-axis and a continuous variable on the y-axis,
+   e.g. dive buddy on x-axis and depth on the y-axis. Bars can be vertical or horizontal.
+   ===================================================================================================== */
 void StatsView::plotValueChart(const std::vector<dive *> &dives,
 			       ChartSubType subType,
 			       const StatsType *categoryType, const StatsBinner *categoryBinner,
@@ -558,11 +598,9 @@ void StatsView::plotValueChart(const std::vector<dive *> &dives,
 	QBarCategoryAxis *catAxis = makeAxis<QBarCategoryAxis>();
 	catAxis->append(categoryNames);
 	catAxis->setTitleText(categoryType->nameWithUnit());
-
-	double maxValue = *std::max_element(values.begin(), values.end());
-	double chartHeight = maxValue * (1.0 + barTopSpace);
 	QValueAxis *valAxis = makeAxis<QValueAxis>();
-	// TODO: round axis labels to "nice" numbers.
+	double maxValue = *std::max_element(values.begin(), values.end());
+	double chartHeight = initYAxisTickmarks(valAxis, (double)maxValue, VALUE);
 	valAxis->setRange(0, chartHeight);
 	valAxis->setLabelFormat(makeFormatString(valueType->decimals()));
 	valAxis->setTitleText(valueType->nameWithUnit());
@@ -584,6 +622,9 @@ void StatsView::plotValueChart(const std::vector<dive *> &dives,
 	hideLegend();
 }
 
+/* This chart draws a nested bar chart (alternative for a stacked bar chart), e.g. dive mode for each buddy.
+   Nested sets of categories on the x-axis and counts on the y-axis.
+   ======================================================================================================== */
 void StatsView::plotDiscreteCountChart(const std::vector<dive *> &dives,
 				      ChartSubType subType,
 				      const StatsType *categoryType, const StatsBinner *categoryBinner)
@@ -637,8 +678,7 @@ void StatsView::plotDiscreteCountChart(const std::vector<dive *> &dives,
 			*set << count;
 		}
 
-		initValueAxis(valAxis, maxCount);
-
+		initYAxisTickmarks(valAxis, (double)maxCount, COUNT);
 		series->append(set);
 		hideLegend();
 	}
@@ -720,6 +760,8 @@ void StatsView::addBar(double lowerBound, double upperBound, double height, cons
 	series->setUpperSeries(upper);
 }
 
+/* This chart draws a histogram of a single continuous variable such ads depth or SAC. The y-axis shows counts.
+   ============================================================================================================ */
 void StatsView::plotHistogramCountChart(const std::vector<dive *> &dives,
 					ChartSubType subType,
 					const StatsType *categoryType, const StatsBinner *categoryBinner)
@@ -762,8 +804,8 @@ void StatsView::plotHistogramCountChart(const std::vector<dive *> &dives,
 	catAxis->setTitleText(categoryType->nameWithUnit());
 
 	QValueAxis *valAxis = makeAxis<QValueAxis>();
-	double chartHeight = initValueAxis(valAxis, maxCategoryCount);
 
+	double chartHeight = initYAxisTickmarks(valAxis, (double)maxCategoryCount, COUNT);
 	bool isHorizontal = subType == ChartSubType::Horizontal;
 	QAbstractAxis *xAxis = catAxis;
 	QAbstractAxis *yAxis = valAxis;
@@ -773,7 +815,7 @@ void StatsView::plotHistogramCountChart(const std::vector<dive *> &dives,
 		double height = count;
 		double lowerBound = categoryBinner->lowerBoundToFloat(*bin);
 		double upperBound = categoryBinner->upperBoundToFloat(*bin);
-		addBar(lowerBound, upperBound, height, QBrush(Qt::blue), QPen(Qt::red), xAxis, yAxis, isHorizontal);
+		addBar(lowerBound, upperBound, height, QBrush(Qt::blue), QPen(Qt::white), xAxis, yAxis, isHorizontal);
 	}
 
 	if (categoryType->type() == StatsType::Type::Numeric) {
@@ -781,7 +823,7 @@ void StatsView::plotHistogramCountChart(const std::vector<dive *> &dives,
 		double median = categoryType->median(dives);
 		QPen averagePen(Qt::green);
 		averagePen.setWidth(2);
-		QPen medianPen(Qt::black);
+		QPen medianPen(Qt::red);
 		medianPen.setWidth(2);
 		addLineMarker(average, 0.0, chartHeight, averagePen, xAxis, yAxis, isHorizontal);
 		addLineMarker(median, 0.0, chartHeight, medianPen, xAxis, yAxis, isHorizontal);
@@ -790,6 +832,9 @@ void StatsView::plotHistogramCountChart(const std::vector<dive *> &dives,
 	hideLegend();
 }
 
+/* This chart draws a histogram of a continuous variable on the x-axis and another continuous
+   continuous variable on the y-axis, e.g. depth categories on the x-axis against SAC on the y-axis.
+   ================================================================================================== */
 void StatsView::plotHistogramChart(const std::vector<dive *> &dives,
 				   ChartSubType subType,
 				   const StatsType *categoryType, const StatsBinner *categoryBinner,
@@ -832,14 +877,16 @@ void StatsView::plotHistogramChart(const std::vector<dive *> &dives,
 	catAxis->setMax(upperBound);
 	catAxis->setLabelsPosition(QCategoryAxis::AxisLabelsPositionOnValue);
 	catAxis->setTitleText(categoryType->nameWithUnit());
-
-	double maxValue = *std::max_element(values.begin(), values.end());
-	double chartHeight = maxValue * (1.0 + barTopSpace);
 	QValueAxis *valAxis = makeAxis<QValueAxis>();
-	// TODO: round axis labels to "nice" numbers.
+	double maxValue = *std::max_element(values.begin(), values.end());
+	double chartHeight = initYAxisTickmarks(valAxis, (double)maxValue, VALUE);
+
+//	double chartHeight = maxValue * (1.0 + barTopSpace);
 	valAxis->setRange(0, chartHeight);
 	valAxis->setLabelFormat(makeFormatString(valueType->decimals()));
 	valAxis->setTitleText(valueType->nameWithUnit());
+	
+
 
 	bool isHorizontal = subType == ChartSubType::Horizontal;
 	QAbstractAxis *xAxis = catAxis;
@@ -851,7 +898,7 @@ void StatsView::plotHistogramChart(const std::vector<dive *> &dives,
 		double height = values[i++];
 		double lowerBound = categoryBinner->lowerBoundToFloat(*bin);
 		double upperBound = categoryBinner->upperBoundToFloat(*bin);
-		addBar(lowerBound, upperBound, height, QBrush(Qt::blue), QPen(Qt::red), xAxis, yAxis, isHorizontal);
+		addBar(lowerBound, upperBound, height, QBrush(Qt::blue), QPen(Qt::white), xAxis, yAxis, isHorizontal);
 	}
 
 	hideLegend();
