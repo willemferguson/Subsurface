@@ -961,6 +961,7 @@ void StatsView::plotDiscreteScatter(const std::vector<dive *> &dives,
 	QScatterSeries *quartileSeries = addSeries<QScatterSeries>(valueType->name());
 	quartileSeries->setMarkerShape(QScatterSeries::MarkerShapeRectangle);
 	quartileSeries->setColor(Qt::red);
+	series->setBorderColor(Qt::blue);
 
 	double x = 0.0;
 	for (const std::vector<double> &array: values) {
@@ -1354,6 +1355,8 @@ void StatsView::plotScatter(const std::vector<dive *> &dives, const StatsType *c
 
 	addAxes(axisX, axisY);
 	QScatterSeries *series = addSeries<QScatterSeries>(valueType->name());
+	series->setMarkerSize(10);
+	series->setBorderColor(Qt::blue);
 
 	for (auto [x, y]: points)
 		series->append(x, y);
