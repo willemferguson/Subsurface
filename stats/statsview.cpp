@@ -20,6 +20,9 @@
 #include <QStackedBarSeries>
 #include <QValueAxis>
 
+#include <iostream>
+using namespace std;
+
 // Some of our compilers do not support std::size(). Roll our own for now.
 template <typename T, size_t N>
 static constexpr size_t array_size(const T (&)[N])
@@ -74,7 +77,7 @@ static const struct ChartType {
 		ChartTypeId::DiscreteBar,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Discrete bar"),
 		stats_types,	// supports all types as first axis
-		stats_types,	// supports all types as second axis
+		stats_types2,	// supports all types as second axis
 		true,
 		true,
 		false,
@@ -85,7 +88,7 @@ static const struct ChartType {
 		ChartTypeId::DiscreteValue,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Discrete value"),
 		stats_types,		// supports all types as first axis
-		stats_numeric_types,	// supports numeric types as second axis, since we want to calculate the mean, etc
+		stats_numeric_types2,	// supports numeric types as second axis, since we want to calculate the mean, etc
 		true,
 		false,
 		false,
@@ -95,7 +98,7 @@ static const struct ChartType {
 	{
 		ChartTypeId::DiscreteCount,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Discrete count"),
-		stats_types,	// supports all types as first axis
+		stats_types2,	// supports all types as first axis
 		{},		// no second axis
 		true,
 		false,
@@ -107,7 +110,7 @@ static const struct ChartType {
 		ChartTypeId::DiscreteBox,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Discrete box"),
 		stats_types,		// supports all types as first axis
-		stats_numeric_types,	// supports numeric types as second axis, since we want to calculate quartiles
+		stats_numeric_types2,	// supports numeric types as second axis, since we want to calculate quartiles
 		true,
 		false,
 		false,
@@ -118,7 +121,7 @@ static const struct ChartType {
 		ChartTypeId::DiscreteScatter,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Discrete scatter"),
 		stats_types,	// supports all types as first axis
-		stats_numeric_types,	// supports numeric types as second axis, since we want to calculate the mean, etc
+		stats_numeric_types2,	// supports numeric types as second axis, since we want to calculate the mean, etc
 		true,
 		false,
 		false,
@@ -140,7 +143,7 @@ static const struct ChartType {
 		ChartTypeId::HistogramBar,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Histogram bar"),
 		stats_continuous_types,	// supports continuous types as first axis
-		stats_numeric_types,	// supports numeric types as second axis, since we want to calculate the mean, etc
+		stats_numeric_types2,	// supports numeric types as second axis, since we want to calculate the mean, etc
 		true,
 		false,
 		false,
@@ -151,7 +154,7 @@ static const struct ChartType {
 		ChartTypeId::ScatterPlot,
 		QT_TRANSLATE_NOOP("StatsTranslations", "Scatter plot"),
 		stats_numeric_types,	// plot any numeric type against any other numeric type
-		stats_numeric_types,	// for time-based charts, there is a different plot
+		stats_numeric_types2,	// for time-based charts, there is a different plot
 		false,
 		false,
 		false,
@@ -261,6 +264,9 @@ static std::vector<const StatsType *> calcSecondAxisTypes(int chartType, int fir
 static const StatsType *idxToSecondAxisType(int chartType, int firstAxis, int secondAxis)
 {
 	std::vector<const StatsType *> secondAxisTypes = calcSecondAxisTypes(chartType, firstAxis);
+	
+//	cout << secondAxis << " " << secondAxisTypes[0]->name().toUtf8().constData() << endl;
+	
 	return secondAxis < 0 || secondAxis >= (int)secondAxisTypes.size() ?
 		nullptr : secondAxisTypes[secondAxis];
 }
@@ -423,6 +429,29 @@ void StatsView::plot(int type, int subTypeIdx,
 	const StatsBinner *secondAxisBinner = t->secondAxisBinned ? secondAxisType->getBinner(secondAxisBin) : nullptr;
 
 	const std::vector<dive *> dives = DiveFilter::instance()->visibleDives();
+	
+
+
+	int xPlotCategory = (int)firstAxisType->type();
+	int yPlotCategory = (int)secondAxisType->type();
+	if(secondAxis == 0) {			// Counts is selected for vertical axis
+		if (xPlotCategory == 0) //  ==== Horizontal axis is discrete data : ====
+			return plotDiscreteCountChart(dives, subType, firstAxisType, firstAxisBinner);   // Discrete count data = bar graph. No alternative
+		else				// Horizontal axis continuous data:
+			return plotHistogramCountChart(dives, subType, firstAxisType, firstAxisBinner);  // Continuous count data = Default: histogtam / Alternative: bar graph
+	} else {
+		if (yPlotCategory > 0) { // ==== Vertical axis is continuous data: =====
+			if(xPlotCategory > 0)  // ==== Horizontal axis continuous data   ===
+				return plotScatter(dives, firstAxisType, secondAxisType);		// Default: Scatterplot / Alternative: histogram, discrete scatter
+			else			// === Horizontal axis discrete data  ====
+				return plotDiscreteScatter(dives, firstAxisType, firstAxisBinner, secondAxisType);  // Default: discrete scatter graph / Alternative: bar graph
+		} else {			// ==== Both vertical and horizontal axes discrete data ====
+			return plotBarChart(dives, subType, firstAxisType, firstAxisBinner, secondAxisType, secondAxisBinner); // Stacked bar graph. No alternative
+		}
+	}
+	
+
+/*
 	switch (t->id) {
 	case ChartTypeId::DiscreteBar:
 		return plotBarChart(dives, subType, firstAxisType, firstAxisBinner, secondAxisType, secondAxisBinner);
@@ -446,6 +475,8 @@ void StatsView::plot(int type, int subTypeIdx,
 		qWarning("Unknown chart type: %d", (int)t->id);
 		return;
 	}
+	
+	*/
 }
 
 template<typename T>

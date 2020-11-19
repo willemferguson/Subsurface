@@ -37,33 +37,11 @@
       <widget class="QComboBox" name="chartType">
       </widget>
      </item>
-     <item>
-      <widget class="QComboBox" name="chartSubType">
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="firstAxisLabel">
-       <property name="text">
-        <string>First axis</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="firstAxis">
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="firstAxisBin">
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="firstAxisOperation">
-      </widget>
-     </item>
+
      <item>
       <widget class="QLabel" name="secondAxisLabel">
        <property name="text">
-        <string>Second axis</string>
+        <string>Vertical axis</string>
        </property>
       </widget>
      </item>
@@ -79,6 +57,36 @@
       <widget class="QComboBox" name="secondAxisOperation">
       </widget>
      </item>
+     
+     
+     <item>
+      <widget class="QLabel" name="firstAxisLabel">
+       <property name="text">
+        <string>Horizontal axis</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="firstAxis">
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="firstAxisBin">
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="firstAxisOperation">
+      </widget>
+     </item>
+     
+          <item>
+      <widget class="QLabel" name="spacerLabel">
+       <property name="text">
+        <string></string>
+       </property>
+      </widget>
+     </item>
+
      <item>
       <widget class="QToolButton" name="plot">
        <property name="text">
@@ -86,6 +94,16 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QComboBox" name="chartSubType">
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="alternativeGraphs">
+      </widget>
+     </item>
+
+
      <item>
       <spacer name="verticalSpacer">
        <property name="orientation">

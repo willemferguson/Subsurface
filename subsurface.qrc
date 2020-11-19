@@ -100,5 +100,7 @@
         <file alias="gps_good_result-icon">icons/resultgreen.png</file>
         <file alias="gps_warning_result-icon">icons/resultyellow.png</file>
         <file alias="gps_bad_result-icon">icons/resultred.png</file>
+        <file alias="graphIcon">icons/graphIcon.png</file>
+
     </qresource>
 </RCC>

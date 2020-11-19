@@ -14,8 +14,11 @@ StatsWidget::StatsWidget(QWidget *parent) : QWidget(parent)
 	connect(ui.chartType, QOverload<int>::of(&QComboBox::activated), this, &StatsWidget::chartTypeChanged);
 	connect(ui.firstAxis, QOverload<int>::of(&QComboBox::activated), this, &StatsWidget::firstAxisChanged);
 	connect(ui.secondAxis, QOverload<int>::of(&QComboBox::activated), this, &StatsWidget::secondAxisChanged);
+	ui.alternativeGraphs->addItem(QIcon(QString::fromUtf8(":graphIcon")), QString::fromUtf8(""));
 
 	chartTypeChanged(0);
+	ui.chartType->hide();
+	ui.chartTypeLabel->hide();
 }
 
 void StatsWidget::closeStats()

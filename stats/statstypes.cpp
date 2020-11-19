@@ -834,6 +834,28 @@ static MinuteBinner minute_binner5(5);
 static MinuteBinner minute_binner10(10);
 static MinuteBinner minute_binner30(30);
 static HourBinner hour_binner;
+
+struct CountType : public StatsTypeTemplate<StatsType::Type::Numeric> {
+	QString name() const override {
+		return StatsTranslations::tr("Counts");
+	}
+	QString unitSymbol() const override {
+		return StatsTranslations::tr("");
+	}
+	int decimals() const override {
+		return 0;
+	}
+	std::vector<const StatsBinner *> binners() const override {
+		return {};
+	}
+	double toFloat(const dive *d) const override {
+		return 0;
+	}
+	std::vector<StatsOperation> supportedOperations() const override {
+		return {};
+	}
+};
+
 struct DurationType : public StatsTypeTemplate<StatsType::Type::Numeric> {
 	QString name() const override {
 		return StatsTranslations::tr("Duration");
@@ -1115,6 +1137,7 @@ struct LocationType : public StatsTypeTemplate<StatsType::Type::Discrete> {
 	}
 };
 
+static CountType count_type;
 static DateType date_type;
 static DepthType depth_type;
 static DurationType duration_type;
@@ -1125,7 +1148,7 @@ static DiveModeType dive_mode_type;
 static BuddyType buddy_type;
 static SuitType suit_type;
 static LocationType location_type;
-const std::vector<const StatsType *> stats_types = {
+const std::vector<const StatsType *> stats_types = {		// For the first variable
 	&date_type, &depth_type, &duration_type, &sac_type,
 	&water_temperature_type, &air_temperature_type,
 	&dive_mode_type, &buddy_type, &suit_type, &location_type
@@ -1138,5 +1161,20 @@ const std::vector<const StatsType *> stats_continuous_types = {
 
 const std::vector<const StatsType *> stats_numeric_types = {
 	&depth_type, &duration_type, &sac_type,
+	&water_temperature_type, &air_temperature_type
+};
+const std::vector<const StatsType *> stats_types2 = {		// For the second variable
+	&count_type, &date_type, &depth_type, &duration_type, &sac_type,
+	&water_temperature_type, &air_temperature_type,
+	&dive_mode_type, &buddy_type, &suit_type, &location_type
+};
+
+const std::vector<const StatsType *> stats_continuous_types2 = {
+	&count_type, &date_type, &depth_type, &duration_type, &sac_type,
+	&water_temperature_type, &air_temperature_type
+};
+
+const std::vector<const StatsType *> stats_numeric_types2 = {
+	&count_type, &depth_type, &duration_type, &sac_type,
 	&water_temperature_type, &air_temperature_type
 };

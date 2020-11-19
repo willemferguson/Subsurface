@@ -111,6 +111,9 @@ private:
 extern const std::vector<const StatsType *> stats_types;
 extern const std::vector<const StatsType *> stats_continuous_types; // includes numeric types
 extern const std::vector<const StatsType *> stats_numeric_types; // types that support averaging, etc
+extern const std::vector<const StatsType *> stats_types2;
+extern const std::vector<const StatsType *> stats_continuous_types2; // includes numeric types
+extern const std::vector<const StatsType *> stats_numeric_types2; // types that support averaging, etc
 
 // Dummy object for our translations
 class StatsTranslations : public QObject
