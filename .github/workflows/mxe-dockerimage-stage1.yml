@@ -33,7 +33,7 @@ jobs:
         echo "::set-env name=NAME::subsurface/mxe-build-container${b}:${v}${s}"
 
     - name: Build and Publish stage 1 Docker image to Dockerhub
-      uses: elgohr/Publish-Docker-Github-Action@master
+      uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name:       ${{ env.NAME }}
         username:   ${{ secrets.DOCKER_USERNAME }}
